@@ -1,0 +1,41 @@
+{
+  "accounts": {
+    "accounting_reference_date": {
+      "day": "30",
+      "month": "09"
+    },
+    "next_accounts": {
+      "due_on": "2026-06-06",
+      "period_end_on": "2025-09-30",
+      "period_start_on": "2024-09-06"
+    },
+    "next_due": "2026-06-06",
+    "next_made_up_to": "2025-09-30"
+  },
+  "can_file": true,
+  "company_name": "FINSQUAD LTD",
+  "company_number": "15941985",
+  "company_status": "active",
+  "confirmation_statement": {
+    "next_due": "2025-09-19",
+    "next_made_up_to": "2025-09-05"
+  },
+  "date_of_creation": "2024-09-06",
+  "etag": "843f4cd484c32ba9a7f4dffef20e4c87c1c8c76c",
+  "jurisdiction": "england-wales",
+  "links": {
+    "filing_history": "/company/15941985/filing-history",
+    "officers": "/company/15941985/officers",
+    "persons_with_significant_control": "/company/15941985/persons-with-significant-control",
+    "self": "/company/15941985"
+  },
+  "registered_office_address": {
+    "address_line_1": "19 Watts Crescent",
+    "country": "United Kingdom",
+    "locality": "Purfleet-On-Thames",
+    "postal_code": "RM19 1TH",
+    "region": "Essex"
+  },
+  "sic_codes": ["62012", "71129"],
+  "type": "ltd"
+}
