@@ -6,8 +6,8 @@ async function getItems(startToken) {
     (res) => res.json()
   );
 }
-async function processItem(item) {
-  return fetch("http://localhost:3001/processItem?item=" + item);
+async function processItem(itemId) {
+  return fetch("http://localhost:3001/processItem?item=" + itemId);
 }
 
 async function* loopThroughItems() {
@@ -20,16 +20,38 @@ async function* loopThroughItems() {
   } while (nextToken);
 }
 
-async function processItems(itemsSource) {
+async function* processItems(itemsSource) {
   for await (const items of itemsSource) {
-    await Promise.all(items.map((item) => processItem(item)));
+    yield await Promise.all(items.map((item) => processItem(item)));
   }
 }
+
+async function saveResult(output) {
+  return fetch("http://localhost:3001/saveResult", {
+    method: "POST",
+    body: JSON.stringify(output),
+  });
+}
+
+async function saveItems(outputSource) {
+  for await (const output of outputSource) {
+    await Promise.all(output.map((item) => saveResult(item)));
+  }
+}
+
+// const items = loopThroughItems();
+// const itemStream = Readable.from(items); // convert iterator to stream
+// await processItems(items);
 
 // const itemStream = loopThroughItems();
 // const itemStream = compose(loopThroughItems(), processItems);
 // const itemStream = compose(loopThroughItems());
-const itemStream = Readable.from(loopThroughItems());
+// const itemStream = Readable.from(loopThroughItems());
 
-// await finished(itemStream);
-await pipeline(itemStream, processItems);
+// await finished(itemStream.pipe(compose(processItems)));
+// await pipeline(itemStream, processItems);
+
+// const itemsSource = loopThroughItems();
+const itemsSource = compose(loopThroughItems()); // get source as stream
+const stream = compose(itemsSource, processItems, saveItems); // connect streams together
+await finished(stream);
