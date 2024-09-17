@@ -5,7 +5,7 @@ const TOTAL_ITEMS = 100;
 const BATCH_SIZE = 10;
 
 const items = generateUUIDs(TOTAL_ITEMS);
-const tokens = generateUUIDs(TOTAL_ITEMS / BATCH_SIZE);
+const tokens = generateUUIDs(TOTAL_ITEMS / BATCH_SIZE - 1);
 const server = Bun.serve({
   async fetch(req: Request) {
     const url = new URL(req.url);

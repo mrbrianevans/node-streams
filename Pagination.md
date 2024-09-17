@@ -191,3 +191,15 @@ Calling `compose` will convert the item source to a stream, giving the same perf
 ### Conclusion
 
 We've looked at a typical example of scanning through a data set, performing some asynchronous processing such as calling an API or database for each item, and shown how by using the built-in Node.js `stream` module, performance can be improved as well as readability and composability.
+
+## Bonus tip
+
+You can use `stream.Readable` with async iterator methods like `.map` to control the concurrency of your functions.
+
+```js
+import { Readable } from "node:stream";
+await Readable.from(loopThroughItems())
+  .map((items) => processItem(items), { concurrency: 100 })
+  .map((items) => saveResult(items), { concurrency: 100 })
+  .toArray();
+```

@@ -19,14 +19,17 @@ async function* loopThroughItems() {
     process.stdout.write(".");
     const res = await getItems(nextToken);
     nextToken = res.nextToken;
-    yield res.items;
+    for (const item of res.items) {
+      yield item;
+    }
   } while (nextToken);
   console.log();
 }
 
-async function* processItems(itemsSource) {
+async function processItems(itemsSource) {
   for await (const items of itemsSource) {
-    yield await Promise.all(items.map((item) => processItem(item)));
+    console.log(items);
+    await Promise.all(items.map((item) => processItem(item)));
   }
 }
 
@@ -38,10 +41,11 @@ async function saveItems(outputSource) {
 
 console.time("pagination");
 import { finished } from "node:stream/promises";
-import { compose } from "node:stream";
+import { compose, Readable } from "node:stream";
 
-const itemsSource = compose(loopThroughItems());
-const stream = compose(itemsSource, processItems, saveItems);
-await finished(stream);
+await Readable.from(loopThroughItems())
+  .map((items) => processItem(items), { concurrency: 100 })
+  .map((items) => saveResult(items), { concurrency: 100 })
+  .toArray();
 
 console.timeEnd("pagination");
