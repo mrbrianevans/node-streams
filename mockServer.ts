@@ -1,7 +1,11 @@
 import { randomUUID } from "crypto";
 import { setTimeout } from "timers/promises";
 
-const tokens = generateUUIDs(10);
+const TOTAL_ITEMS = 100;
+const BATCH_SIZE = 10;
+
+const items = generateUUIDs(TOTAL_ITEMS);
+const tokens = generateUUIDs(TOTAL_ITEMS / BATCH_SIZE);
 const server = Bun.serve({
   async fetch(req: Request) {
     const url = new URL(req.url);
@@ -12,11 +16,13 @@ const server = Bun.serve({
     if (url.pathname === "/getItems") {
       await setTimeout(200);
       const startToken = url.searchParams.get("startToken");
-      const index = startToken ? tokens.indexOf(startToken) : -1;
+      const index = startToken ? tokens.indexOf(startToken) + 1 : 0;
+      const startPosition = index * BATCH_SIZE;
       return new Response(
         JSON.stringify({
-          items: generateUUIDs(10),
-          nextToken: tokens[index + 1],
+          items: items.slice(startPosition, startPosition + BATCH_SIZE),
+          nextToken: tokens[index],
+          page: index,
         })
       );
     }

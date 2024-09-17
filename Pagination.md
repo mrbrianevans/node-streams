@@ -58,11 +58,12 @@ Let's write this using an async iterator and `for await` loop.
 async function* loopThroughItems() {
   let nextToken = "";
   do {
-    console.log("getting items with token", nextToken);
+    process.stdout.write(".");
     const res = await getItems(nextToken);
     nextToken = res.nextToken;
     yield res.items;
   } while (nextToken);
+  console.log();
 }
 
 async function processItems(itemsSource) {
@@ -80,7 +81,7 @@ Invoking these functions could be done like this:
 ```js
 // stage 3
 const itemsSource = loopThroughItems();
-await processItems(items);
+await processItems(itemsSource);
 ```
 
 This would have the same performance as the previous example (stage 2), but seperates the logic of processing items from requesting items with a continuation token.
@@ -100,7 +101,7 @@ To convert our async iterator to a stream, let's use the `stream.Readable` const
 import { Readable } from "node:stream";
 const itemsSource = loopThroughItems(); // calling our async generator
 const itemStream = Readable.from(itemsSource); // convert iterator to stream
-await processItems(items);
+await processItems(itemStream);
 ```
 
 This is now faster than all the previous examples.
