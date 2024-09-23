@@ -15,7 +15,7 @@ const server = Bun.serve({
     }
     if (url.pathname === "/getItems") {
       await setTimeout(200);
-      const startToken = url.searchParams.get("startToken");
+      const startToken = url.searchParams.get("nextToken");
       const index = startToken ? tokens.indexOf(startToken) + 1 : 0;
       const startPosition = index * BATCH_SIZE;
       return new Response(

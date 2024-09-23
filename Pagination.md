@@ -7,8 +7,8 @@ Think of a service where you can get a limited number of items with each HTTP re
 Lets define functions for `getItems` and `processItem`, both asynchronous since they're accessing HTTP services.
 
 ```js
-async function getItems(startToken) {
-  return fetch("http://localhost:3001/getItems?startToken=" + startToken).then(
+async function getItems(nextToken) {
+  return fetch("http://localhost:3001/getItems?nextToken=" + nextToken).then(
     (res) => res.json()
   );
 }
