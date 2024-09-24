@@ -5,7 +5,7 @@ You can make a file smaller by gzipping it, then gunzip it to get the original b
 
 For this example, I'm going to be using the bulk file of company data provided by Companies House. Its a big CSV file that I've gzipped with the gzip command line tool.
 
-> Original size: 379M. Gzipped size 70M. Time to gzip with cli: 17s. Time to unzip with cli: 4s.
+> Original size: 379M. Gzipped size 70M. Time to gzip with cli: 17s. Time to gunzip with cli: 4s.
 
 ## Sync implementation
 
@@ -19,8 +19,6 @@ const rawContent = await readFile(input);
 const unzippedContent = gunzipSync(rawContent).toString("utf8");
 await writeFile(output, unzippedContent);
 ```
-
-This takes about 5 seconds running with Node.js on my 400MB CSV file. (needs benchmark with repeated runs)
 
 ## Stream implementation
 
@@ -36,10 +34,23 @@ const outputStream = createWriteStream(output);
 await pipeline(inputStream, createGunzip(), outputStream);
 ```
 
-This also takes about 5 seconds in Node.js, but presumably lower memory consumption. Also needs a benchmark with hyperfine, possibly also with memory usage.
+Switching to streaming would allow it to be scalable to much bigger files with reduced memory consumption.
+
+### Composable
+
+Using the `compose` function provided by `node:stream` we can compose the output stream in stages, to allow for potential re-use if we had another destination to write the output to other than a local file. For example, we could pipeline the output to an S3 bucket instead.
+
+```js
+const rawContent = createReadStream(input);
+const unzipper = createGunzip();
+const writeOutput = createWriteStream(output);
+const readAndGunzip = compose(rawContent, unzipper);
+const gunzipPipeline = compose(readAndGunzip, writeOutput);
+await finished(gunzipPipeline);
+```
 
 ## Changing runtime
 
-So switching to streaming gave us a small improvement in speed in this example, but makes it scalable to much bigger files. If we wanted to get even quicker, we could try using a different javascript runtime to Node.js. Bun for example.
+If we wanted to get even quicker, we could try using a different javascript runtime to Node.js. Bun for example.
 
-Where Node.js is more than 5 seconds, Bun takes less than 2 seconds. More than double as fast.
+Where on my laptop Node.js takes more than 5 seconds, Bun takes less than 2 seconds. More than double as fast.

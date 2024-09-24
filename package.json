@@ -1,6 +1,5 @@
 {
-  "name": "streams",
-  "module": "index.ts",
+  "name": "node-streams",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest",

@@ -24,8 +24,10 @@ async function processItems(itemsSource) {
 }
 
 console.time("pagination");
-import { Readable } from "node:stream";
+import { compose } from "node:stream";
+import { finished } from "node:stream/promises";
 
-const itemsSource = Readable.from(loopThroughItems());
-await processItems(itemsSource);
+const itemsSource = compose(loopThroughItems());
+const stream = compose(itemsSource, processItems);
+await finished(stream);
 console.timeEnd("pagination");
