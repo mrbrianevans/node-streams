@@ -41,8 +41,27 @@ The pagination example uses a mock API server running in a separate process to s
 
 Then to run the pagination example, use `node pagination.js`.
 
+For a method of controlling concurrency when async processing items in a stream, see the bonus tip in [`Pagination.md`](./Pagination.md#bonus-tip).
+
 ## Compression
 
 The compression example uses a 400MB CSV gzipped. To get a suitable file, see the multiple file parts on https://download.companieshouse.gov.uk/en_output.html (each one is around 400MB). After downloading and unzipping one of these, use the `gzip` command line tool to gzip it to `data/companies.csv.gz`.
 
 Then to run the compression script, use `node compression.js` or `bun compression.js` for performance improvements.
+
+## Further resources
+
+A great article on streaming in Node.js by Matteo Collina:
+https://blog.platformatic.dev/a-guide-to-reading-and-writing-nodejs-streams
+
+The official Node.js docs on the `stream` module:
+https://nodejs.org/docs/latest/api/stream.html
+
+Bun: a fast Javascript runtime (especially in the example of compression):
+https://bun.sh/
+
+Real world application built with `node:stream` for data loading:
+https://companiesware.house
+
+Open-source real-time streaming example:
+https://companies.stream/
